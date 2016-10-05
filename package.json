@@ -1,6 +1,8 @@
 {
   "name": "cargo-whale",
+  "description": "",
   "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
     "build": "gulp clean:build && gulp frontend && gulp electron",
     "start": "gulp clean:build && gulp frontend && gulp dev",
@@ -21,6 +23,7 @@
     "gulp": "3.9.0",
     "gulp-atom-electron": "^1.9.0",
     "gulp-rename": "1.2.2",
+    "gulp-sass": "^2.3.2",
     "gulp-symdest": "^1.1.0",
     "gulp-traceur": "0.17.2",
     "gulp-webserver": "0.9.1"

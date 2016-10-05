@@ -2,6 +2,7 @@ var gulp = require('gulp'),
   del = require('del'),
   rename = require('gulp-rename'),
   traceur = require('gulp-traceur'),
+  sass = require('gulp-sass'),
   webserver = require('gulp-webserver'),
   electron = require('gulp-atom-electron'),
   symdest = require('gulp-symdest');
@@ -10,7 +11,8 @@ var config = {
   sourceDir: 'src',
   buildDir: 'build',
   packagesDir: 'packages',
-  npmDir: 'node_modules'
+  npmDir: 'node_modules',
+  bowerDir: 'bower_components'
 };
 
 
@@ -90,12 +92,12 @@ gulp.task('dev:serve', function() {
 });
 
 
-// run init tasks
+// run frontend tasks
 gulp.task('frontend', [
   'frontend:dependencies',
   'frontend:js',
   'frontend:html',
-  'frontend:css'
+  'frontend:sass'
 ]);
 
 // move dependencies into build dir
@@ -109,7 +111,9 @@ gulp.task('frontend:dependencies', function() {
       config.npmDir + '/angular2/bundles/angular2-polyfills.js',
       config.npmDir + '/rxjs/bundles/Rx.js',
       config.npmDir + '/es6-shim/es6-shim.min.js',
-      config.npmDir + '/es6-shim/es6-shim.map'
+      config.npmDir + '/es6-shim/es6-shim.map',
+      config.bowerDir + '/jquery/dist/jquery.min.js',
+      config.bowerDir + '/bootstrap-sass/assets/javascripts/bootstrap.min.js'
     ])
     .pipe(gulp.dest(config.buildDir + '/lib'));
 });
@@ -140,8 +144,15 @@ gulp.task('frontend:html', function() {
 });
 
 // move css
-gulp.task('frontend:css', function() {
-  return gulp.src(config.sourceDir + '/**/*.css')
+gulp.task('frontend:sass', function() {
+  return gulp.src(config.sourceDir + '/**/*.scss')
+    .pipe(sass({
+      style: 'compressed',
+      includePaths: [
+        config.sourceDir + '/styles',
+        config.bowerDir + '/bootstrap-sass/assets/stylesheets'
+      ]
+    }))
     .pipe(gulp.dest(config.buildDir))
 });
 

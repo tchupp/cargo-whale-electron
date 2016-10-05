@@ -1,0 +1,21 @@
+{
+  "name": "cargo-whale",
+  "description": "",
+  "main": "",
+  "authors": [
+    "tclchiam <tclchiam@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "bootstrap-sass-official#^3.3.7"
+  },
+  "private": true
+}
