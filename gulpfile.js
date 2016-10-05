@@ -2,20 +2,69 @@ var gulp = require('gulp'),
   del = require('del'),
   rename = require('gulp-rename'),
   traceur = require('gulp-traceur'),
-  webserver = require('gulp-webserver');
+  webserver = require('gulp-webserver'),
+  electron = require('gulp-atom-electron'),
+  symdest = require('gulp-symdest');
 
 var config = {
   sourceDir: 'src',
   buildDir: 'build',
+  packagesDir: 'packages',
   npmDir: 'node_modules'
 };
 
 
+gulp.task('clean', [
+  'clean:build',
+  'clean:package'
+]);
+
 // clean the build dir
-gulp.task('clean', function() {
+gulp.task('clean:build', function() {
   return del(config.buildDir + '/**/*', {
     force: true
   });
+});
+
+// clean the package dir
+gulp.task('clean:package', function() {
+  return del(config.packagesDir + '/**/*', {
+    force: true
+  });
+});
+
+
+gulp.task('package', [
+  'package:osx',
+  'package:linux',
+  'package:windows'
+]);
+
+gulp.task('package:osx', function() {
+  return gulp.src(config.buildDir + '/**/*')
+    .pipe(electron({
+      version: '0.36.7',
+      platform: 'darwin'
+    }))
+    .pipe(symdest(config.packagesDir + '/osx'));
+});
+
+gulp.task('package:linux', function() {
+  return gulp.src(config.buildDir + '/**/*')
+    .pipe(electron({
+      version: '0.36.7',
+      platform: 'linux'
+    }))
+    .pipe(symdest(config.packagesDir + '/linux'));
+});
+
+gulp.task('package:windows', function() {
+  return gulp.src(config.buildDir + '/**/*')
+    .pipe(electron({
+      version: '0.36.7',
+      platform: 'win32'
+    }))
+    .pipe(symdest(config.packagesDir + '/windows'));
 });
 
 
@@ -25,14 +74,12 @@ gulp.task('dev', [
   'dev:serve'
 ]);
 
-
 // watch for changes and run the relevant task
 gulp.task('dev:watch', function() {
-  gulp.watch(config.sourceDir + '/**/*.js',   ['frontend:js']);
+  gulp.watch(config.sourceDir + '/**/*.js', ['frontend:js']);
   gulp.watch(config.sourceDir + '/**/*.html', ['frontend:html']);
-  gulp.watch(config.sourceDir + '/**/*.css',  ['frontend:css']);
+  gulp.watch(config.sourceDir + '/**/*.css', ['frontend:css']);
 });
-
 
 // serve the build dir
 gulp.task('dev:serve', function() {
@@ -44,13 +91,12 @@ gulp.task('dev:serve', function() {
 
 
 // run init tasks
-gulp.task('default', [
+gulp.task('frontend', [
   'frontend:dependencies',
   'frontend:js',
   'frontend:html',
   'frontend:css'
 ]);
-
 
 // move dependencies into build dir
 gulp.task('frontend:dependencies', function() {
@@ -67,7 +113,6 @@ gulp.task('frontend:dependencies', function() {
     ])
     .pipe(gulp.dest(config.buildDir + '/lib'));
 });
-
 
 // transpile & move js
 gulp.task('frontend:js', function() {
@@ -88,16 +133,23 @@ gulp.task('frontend:js', function() {
     .pipe(gulp.dest(config.buildDir));
 });
 
-
 // move html
 gulp.task('frontend:html', function() {
   return gulp.src(config.sourceDir + '/**/*.html')
     .pipe(gulp.dest(config.buildDir))
 });
 
-
 // move css
 gulp.task('frontend:css', function() {
   return gulp.src(config.sourceDir + '/**/*.css')
     .pipe(gulp.dest(config.buildDir))
+});
+
+
+gulp.task('electron', function() {
+  return gulp.src([
+      config.sourceDir + '/electron/main.js',
+      config.sourceDir + '/electron/package.json'
+    ])
+    .pipe(gulp.dest(config.buildDir));
 });
