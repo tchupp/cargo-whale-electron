@@ -109,6 +109,7 @@ gulp.task('frontend:dependencies', function() {
       config.npmDir + '/reflect-metadata/Reflect.js',
       config.npmDir + '/angular2/bundles/angular2.js',
       config.npmDir + '/angular2/bundles/angular2-polyfills.js',
+      config.npmDir + '/angular2/bundles/router.js',
       config.npmDir + '/rxjs/bundles/Rx.js',
       config.npmDir + '/es6-shim/es6-shim.min.js',
       config.npmDir + '/es6-shim/es6-shim.map',
