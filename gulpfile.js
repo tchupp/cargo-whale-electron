@@ -3,7 +3,7 @@ var gulp = require('gulp'),
   rename = require('gulp-rename'),
   traceur = require('gulp-traceur'),
   sass = require('gulp-sass'),
-  webserver = require('gulp-webserver'),
+  browserSync = require('browser-sync').create(),
   electron = require('gulp-atom-electron'),
   symdest = require('gulp-symdest');
 
@@ -14,6 +14,8 @@ var config = {
   npmDir: 'node_modules',
   bowerDir: 'bower_components'
 };
+
+var version = '0.0.0';
 
 
 gulp.task('clean', [
@@ -45,16 +47,16 @@ gulp.task('package', [
 gulp.task('package:osx', function() {
   return gulp.src(config.buildDir + '/**/*')
     .pipe(electron({
-      version: '0.36.7',
+      version: version,
       platform: 'darwin'
     }))
     .pipe(symdest(config.packagesDir + '/osx'));
 });
 
 gulp.task('package:linux', function() {
-  return gulp.src(config.buildDir + '/**/*')
+    return gulp.src(config.buildDir + '/**/*')
     .pipe(electron({
-      version: '0.36.7',
+      version: version,
       platform: 'linux'
     }))
     .pipe(symdest(config.packagesDir + '/linux'));
@@ -63,7 +65,7 @@ gulp.task('package:linux', function() {
 gulp.task('package:windows', function() {
   return gulp.src(config.buildDir + '/**/*')
     .pipe(electron({
-      version: '0.36.7',
+      version: version,
       platform: 'win32'
     }))
     .pipe(symdest(config.packagesDir + '/windows'));
@@ -78,17 +80,17 @@ gulp.task('dev', [
 
 // watch for changes and run the relevant task
 gulp.task('dev:watch', function() {
-  gulp.watch(config.sourceDir + '/**/*.js', ['frontend:js']);
-  gulp.watch(config.sourceDir + '/**/*.html', ['frontend:html']);
+
+  gulp.watch(config.sourceDir + '/**/*.js', ['frontend:js']).on('change', browserSync.reload);
+  gulp.watch(config.sourceDir + '/**/*.html', ['frontend:html']).on('change', browserSync.reload);
   gulp.watch(config.sourceDir + '/**/*.scss', ['frontend:sass']);
 });
 
 // serve the build dir
 gulp.task('dev:serve', function() {
-  gulp.src(config.buildDir)
-    .pipe(webserver({
-      open: true
-    }));
+  browserSync.init({
+      server: './build'
+  });
 });
 
 
@@ -141,7 +143,7 @@ gulp.task('frontend:js', function() {
 // move html
 gulp.task('frontend:html', function() {
   return gulp.src(config.sourceDir + '/**/*.html')
-    .pipe(gulp.dest(config.buildDir))
+    .pipe(gulp.dest(config.buildDir));
 });
 
 // move css
@@ -155,6 +157,7 @@ gulp.task('frontend:sass', function() {
       ]
     }))
     .pipe(gulp.dest(config.buildDir))
+    .pipe(browserSync.stream());
 });
 
 
