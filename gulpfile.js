@@ -80,7 +80,7 @@ gulp.task('dev', [
 gulp.task('dev:watch', function() {
   gulp.watch(config.sourceDir + '/**/*.js', ['frontend:js']);
   gulp.watch(config.sourceDir + '/**/*.html', ['frontend:html']);
-  gulp.watch(config.sourceDir + '/**/*.css', ['frontend:css']);
+  gulp.watch(config.sourceDir + '/**/*.scss', ['frontend:sass']);
 });
 
 // serve the build dir
