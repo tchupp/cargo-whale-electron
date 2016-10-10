@@ -1,12 +1,11 @@
 var gulp = require('gulp'),
     del = require('del'),
-    rename = require('gulp-rename'),
-    traceur = require('gulp-traceur'),
     sass = require('gulp-sass'),
-    browserSync = require('browser-sync').create(),
     electron = require('gulp-atom-electron'),
     symdest = require('gulp-symdest'),
-    embedTemplates = require('gulp-angular-embed-templates');
+    tsProject = require('gulp-typescript').createProject('tsconfig.json'),
+    browserSync = require('browser-sync').create();
+
 
 var config = {
     sourceDir: 'src',
@@ -16,7 +15,7 @@ var config = {
     bowerDir: 'bower_components'
 };
 
-var version = '0.36.7';
+var electronVersion = '0.36.7';
 
 
 gulp.task('clean', [
@@ -48,7 +47,7 @@ gulp.task('package', [
 gulp.task('package:osx', function () {
     return gulp.src(config.buildDir + '/**/*')
         .pipe(electron({
-            version: version,
+            version: electronVersion,
             platform: 'darwin'
         }))
         .pipe(symdest(config.packagesDir + '/osx'));
@@ -57,7 +56,7 @@ gulp.task('package:osx', function () {
 gulp.task('package:linux', function () {
     return gulp.src(config.buildDir + '/**/*')
         .pipe(electron({
-            version: version,
+            version: electronVersion,
             platform: 'linux'
         }))
         .pipe(symdest(config.packagesDir + '/linux'));
@@ -66,7 +65,7 @@ gulp.task('package:linux', function () {
 gulp.task('package:windows', function () {
     return gulp.src(config.buildDir + '/**/*')
         .pipe(electron({
-            version: version,
+            version: electronVersion,
             platform: 'win32'
         }))
         .pipe(symdest(config.packagesDir + '/windows'));
@@ -82,8 +81,8 @@ gulp.task('dev', [
 // watch for changes and run the relevant task
 gulp.task('dev:watch', function () {
 
-    gulp.watch(config.sourceDir + '/**/*.js', ['frontend:js']).on('change', browserSync.reload);
-    gulp.watch(config.sourceDir + '/**/*.html', ['frontend:js', 'frontend:html']).on('change', browserSync.reload);
+    gulp.watch(config.sourceDir + '/**/*.ts', ['frontend:ts']).on('change', browserSync.reload);
+    gulp.watch(config.sourceDir + '/**/*.html', ['frontend:html']).on('change', browserSync.reload);
     gulp.watch(config.sourceDir + '/**/*.scss', ['frontend:sass']);
 });
 
@@ -98,7 +97,7 @@ gulp.task('dev:serve', function () {
 // run frontend tasks
 gulp.task('frontend', [
     'frontend:dependencies',
-    'frontend:js',
+    'frontend:ts',
     'frontend:html',
     'frontend:sass'
 ]);
@@ -122,18 +121,11 @@ gulp.task('frontend:dependencies', function () {
         .pipe(gulp.dest(config.buildDir + '/lib'));
 });
 
-// transpile & move js
-gulp.task('frontend:js', function () {
-    return gulp.src([config.sourceDir + '/**/*.js', '!' + config.sourceDir + '/electron/main.js'])
-        .pipe(traceur({
-            modules: 'instantiate',
-            moduleName: true,
-            annotations: true,
-            types: true,
-            memberVariables: true
-        }))
-        .pipe(embedTemplates())
-        .pipe(gulp.dest(config.buildDir));
+// compile & move ts
+gulp.task('frontend:ts', function () {
+    var tsResult = tsProject.src()
+        .pipe(tsProject());
+    return tsResult.js.pipe(gulp.dest(config.buildDir));
 });
 
 // move html
