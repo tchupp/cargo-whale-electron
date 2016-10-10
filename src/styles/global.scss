@@ -1,2 +1,6 @@
-@import "_variables";
+@import "variables";
 @import "bootstrap";
+
+body {
+    background: $black;
+}
