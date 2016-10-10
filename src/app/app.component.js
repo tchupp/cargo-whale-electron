@@ -1,6 +1,6 @@
 import {Component} from "angular2/core";
 
-import {MachineList} from "../components/machine-list/machine-list"
+import {MachineList} from "components/machine-list/machine-list.component"
 
 @Component({
     selector: 'cw-app',
@@ -8,5 +8,5 @@ import {MachineList} from "../components/machine-list/machine-list"
     templateUrl: 'app.html'
 })
 
-export class Application {
+export class ApplicationComponent {
 }
