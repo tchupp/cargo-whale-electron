@@ -1,6 +1,7 @@
 import {bootstrap} from "angular2/platform/browser";
 import {provide} from "angular2/core";
-import {ROUTER_PROVIDERS, APP_BASE_HREF, LocationStrategy, HashLocationStrategy} from "angular2/router";
+import {ROUTER_PROVIDERS} from "angular2/router";
+import {APP_BASE_HREF, LocationStrategy, HashLocationStrategy} from "angular2/platform/common"
 import {ApplicationComponent} from "app/app.component";
 
 bootstrap(ApplicationComponent, [
