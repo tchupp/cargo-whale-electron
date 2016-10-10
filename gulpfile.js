@@ -124,7 +124,7 @@ gulp.task('frontend:dependencies', function () {
 
 // transpile & move js
 gulp.task('frontend:js', function () {
-    return gulp.src(config.sourceDir + '/**/*.js')
+    return gulp.src([config.sourceDir + '/**/*.js', '!' + config.sourceDir + '/electron/main.js'])
         .pipe(rename({
             extname: ''
         }))
