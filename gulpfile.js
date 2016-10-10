@@ -5,7 +5,8 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     browserSync = require('browser-sync').create(),
     electron = require('gulp-atom-electron'),
-    symdest = require('gulp-symdest');
+    symdest = require('gulp-symdest'),
+    embedTemplates = require('gulp-angular-embed-templates');
 
 var config = {
     sourceDir: 'src',
@@ -15,7 +16,7 @@ var config = {
     bowerDir: 'bower_components'
 };
 
-var version = '0.0.0';
+var version = '0.36.7';
 
 
 gulp.task('clean', [
@@ -82,7 +83,7 @@ gulp.task('dev', [
 gulp.task('dev:watch', function () {
 
     gulp.watch(config.sourceDir + '/**/*.js', ['frontend:js']).on('change', browserSync.reload);
-    gulp.watch(config.sourceDir + '/**/*.html', ['frontend:html']).on('change', browserSync.reload);
+    gulp.watch(config.sourceDir + '/**/*.html', ['frontend:js', 'frontend:html']).on('change', browserSync.reload);
     gulp.watch(config.sourceDir + '/**/*.scss', ['frontend:sass']);
 });
 
@@ -137,6 +138,7 @@ gulp.task('frontend:js', function () {
         .pipe(rename({
             extname: '.js'
         }))
+        .pipe(embedTemplates())
         .pipe(gulp.dest(config.buildDir));
 });
 
