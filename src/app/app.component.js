@@ -1,6 +1,6 @@
 import {Component} from "angular2/core";
 
-import {MachineList} from "components/machine-list/machine-list.component"
+import {MachineList} from "components/machine-list/machine-list.component";
 
 @Component({
     selector: 'cw-app',

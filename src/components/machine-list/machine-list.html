@@ -1,5 +1,8 @@
-<div class="col-md-4">
-    <pre>Machine Item</pre>
-    <pre>Machine Item</pre>
-    <pre>Machine Item</pre>
+<div class="col-sm-3">
+    <h2>Docker Machines</h2>
+    <ul class="docker-machine-list">
+        <li *ngFor="let machine of machines">
+            <pre>{{machine | json}}</pre>
+        </li>
+    </ul>
 </div>
